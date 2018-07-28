@@ -10,17 +10,23 @@
 <body>
     {% if this_user %}
     <h2>Hey {{this_user.fname}}!</h2>
-    <a href="/logout">Logout</a>
+    <ul>
+        <li><a href="/logout">Logout</a></li>
     {% else %}
-    <h2>Home</h2>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+    <h2>Welcome!</h2>
+    <ul>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+    
     {% endif %}
-    <a href="/images">Add Photo</a>
+        <li><a href="/images">Add Photo</a></li>
+    </ul>
     {% if images %}
         {% for image in images %}
-        <div>
-            <img src={{image.photo}} alt="{{ image.id }}">
+        <div class="wedding-img-containter">
+            <div class="wedding-img" style="background-image: url({{image.photo}}); background-size: cover">
+
+            </div>
             {% if image.liked_by|length > 0 %}
             <p>{{ image.liked_by|length }} like(s)</p>
             {% endif %}

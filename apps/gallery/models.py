@@ -80,6 +80,7 @@ class UserManager():
     # Add Photo to User
     def add_photo(self, postData, fileData, email):
         fileData['wedding_image'].name = generateNewFileName(fileData['wedding_image'].name)
+        print(fileData['wedding_image'])
         photo_uploaded = sendImageToS3(fileData['wedding_image'])
         user = User.objects(email=email)[0]
         if user.user_level == 9:
