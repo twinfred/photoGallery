@@ -18,7 +18,7 @@ def sendImageToS3(this_img):
     print(this_img)
     AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = 'wedding-photo-gallery-assets'
+    AWS_STORAGE_BUCKET_NAME = 'wedding-photos-gallery'
 
     s3 = boto3.resource(
         's3',
@@ -28,4 +28,4 @@ def sendImageToS3(this_img):
     )
     s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=this_img.name, Body=this_img, ContentType='image/*')
 
-    return "https://s3-us-west-1.amazonaws.com/wedding-photo-gallery-assets/" + this_img.name
+    return "https://s3.us-east-2.amazonaws.com/" + AWS_STORAGE_BUCKET_NAME + "/" + this_img.name
