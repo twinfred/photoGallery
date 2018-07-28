@@ -12,6 +12,9 @@
     <h2>Hey {{this_user.fname}}!</h2>
     <ul>
         <li><a href="/logout">Logout</a></li>
+        {% if this_user.user_level == 9 %}
+        <li><a href="/admin">Admin Panel</a></li>
+        {% endif %}
     {% else %}
     <h2>Welcome!</h2>
     <ul>
@@ -22,18 +25,23 @@
         <li><a href="/images">Add Photo</a></li>
     </ul>
     {% if images %}
+        <h3>Recent Photos:</h3>
+        <p>Order By: <a href="/?sort=date">Upload Date</a> | <a href="/?sort=likes">Like Count</a></p>
         {% for image in images %}
         <div class="wedding-img-containter">
-            <div class="wedding-img" style="background-image: url({{image.photo}}); background-size: cover">
-
-            </div>
-            {% if image.liked_by|length > 0 %}
-            <p>{{ image.liked_by|length }} like(s)</p>
-            {% endif %}
+            <div class="wedding-img" style="background-image: url({{image.photo}}); background-size: cover"></div>
             <form action="/images/like/{{ image.id }}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Like">
+                <input type="submit" value="Like" class="like-btn">
             </form>
+            <p>Added: {{ image.created_at }}</p>
+            {% if image.liked_by|length > 1 %}
+            <p class="like-count">{{ image.liked_by|length }} likes</p>
+            {% elif image.liked_by|length == 1 %}
+            <p class="like-count">{{ image.liked_by|length }} like</p>
+            {% else %}
+            <p class="like-count">0 likes</p>
+            {% endif %}
         </div>
         {% endfor %}
     {% endif %}

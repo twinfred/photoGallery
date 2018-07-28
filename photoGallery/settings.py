@@ -139,4 +139,3 @@ DEFAULT_FILE_STORAGE = 'photoGallery.storage_backends.MediaStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'

@@ -21,16 +21,30 @@ def admin(request):
         else:
             print('awesome')
             context = {
-                'images': GalleryPhoto.objects(approved=True),
+                'images': GalleryPhoto.objects(approved=True).order_by('-created_at'),
                 'pending_images': GalleryPhoto.objects(approved=False),
             }
             return render(request, 'gallery/admin.html', context)
 
 # User-Facing Pages
 def index(request):
-    context = {
-        'images': GalleryPhoto.objects(approved=True)
-    }
+    if request.GET != {}:
+        if request.GET['sort'] == 'likes':
+            photos = GalleryPhoto.objects(approved=True)
+            print photos
+            for photo in photos:
+                photo.like_count = len(photo['liked_by'])
+            context = {
+                'images': photos.order_by('-like_count')
+            }
+        else:
+            context = {
+                'images': GalleryPhoto.objects(approved=True).order_by('-created_at')
+            }
+    else:
+        context = {
+                'images': GalleryPhoto.objects(approved=True).order_by('-created_at')
+            }
     if 'email' in request.session:
         context['this_user'] = User.objects.get(email = request.session['email'])
     return render(request, 'gallery/index.html', context)
@@ -103,6 +117,23 @@ def like(request, image_id=''):
         return redirect('/')
     else:
         print('doh')
+        return redirect('/')
+
+def approve(request, image_id=''):
+    if not 'email' in request.session:
+        return redirect('/register')
+    if request.method == 'GET':
+        return redirect('/')
+    if request.method == 'POST':
+        email = request.session['email']
+        user = User.objects(email=email)[0]
+        if user.user_level != 9:
+            return redirect('/')
+        else:
+            User.user_manager.approve_photo(image_id)
+            return redirect('/admin')
+    else:
+        print('doh!')
         return redirect('/')
 
 

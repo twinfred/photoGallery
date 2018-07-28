@@ -10,13 +10,14 @@ from .s3image import sendImageToS3, generateNewFileName
 
 connect(DBNAME)
 
+EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
+
 class GalleryPhoto(Document):
     photo = fields.StringField()
     liked_by = fields.ListField(fields.StringField())
+    like_count = fields.IntField(default=0)
     approved = fields.BooleanField(default=False)
     created_at = fields.DateTimeField(default=datetime.datetime.utcnow)
-
-EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 class UserManager():
 
@@ -47,6 +48,7 @@ class UserManager():
         lname = postData['lname']
         email = postData['email'].lower()
         password = bcrypt.hashpw(postData['password'].encode(), bcrypt.gensalt())
+        # First User Created Becomes Admin
         if len(User.objects) == 0:
             user_level = 9
         else:
@@ -79,23 +81,33 @@ class UserManager():
     
     # Add Photo to User
     def add_photo(self, postData, fileData, email):
+        # Create unique filename
         fileData['wedding_image'].name = generateNewFileName(fileData['wedding_image'].name)
-        print(fileData['wedding_image'])
+        # Upload photo to S3
         photo_uploaded = sendImageToS3(fileData['wedding_image'])
+        # Add photo to DB
         user = User.objects(email=email)[0]
         if user.user_level == 9:
             new_photo = GalleryPhoto(photo=photo_uploaded, approved=True)
         else:
             new_photo = GalleryPhoto(photo=photo_uploaded)
         new_photo.save()
+        # Add photo to user who uploaded
         user.update(add_to_set__photos=new_photo)
         return
 
     # Like a Photo
     def like_photo(self, image_id, email):
         photo = GalleryPhoto.objects(id=image_id)
+        photo.update(inc__like_count=1)
         user = User.objects(email=email)[0]
         photo.update(add_to_set__liked_by=user.id)
+        return
+        
+    # Approve Photo
+    def approve_photo(self, image_id):
+        photo = GalleryPhoto.objects(id=image_id)
+        photo.update(set__approved=True)
         return
 
 class User(Document):

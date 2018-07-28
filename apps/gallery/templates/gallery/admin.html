@@ -1,1 +1,42 @@
-Admin
+{% load static %}<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'gallery/css/app.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    {% if pending_images %}
+        <h3>Photos Pending Approval:</h3>
+        {% for image in pending_images %}
+        <div class="wedding-img-containter">
+            <div class="wedding-img" style="background-image: url({{image.photo}}); background-size: cover"></div>
+            <p>Added: {{ image.created_at }}</p>
+            <form action="/images/approve/{{ image.id }}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Approve" class="like-btn">
+            </form>
+        </div>
+        {% endfor %}
+    {% endif %}
+    {% if images %}
+        <h3>Approved Photos:</h3>
+        {% for image in images %}
+        <div class="wedding-img-containter">
+            <div class="wedding-img" style="background-image: url({{image.photo}}); background-size: cover"></div>
+            <p>Added: {{ image.created_at }}</p>
+            {% if image.liked_by|length > 1 %}
+            <p class="like-count">{{ image.liked_by|length }} likes</p>
+            {% elif image.liked_by|length == 1 %}
+            <p class="like-count">{{ image.liked_by|length }} like</p>
+            {% else %}
+            <p class="like-count">0 likes</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

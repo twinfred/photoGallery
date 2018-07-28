@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'images$', views.images),
     url(r'images/(?P<image_id>\w+)$', views.images),
     url(r'images/like/(?P<image_id>\w+)$', views.like),
+    url(r'images/approve/(?P<image_id>\w+)$', views.approve),
 
     # Catch-All
     url(r'^', views.home), # Redirect to /images
