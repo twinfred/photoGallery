@@ -24,6 +24,7 @@ pycparser==2.18
 pylint==1.8.3
 pymongo==3.7.1
 python-dateutil==2.7.3
+python-decouple==3.1
 pytz==2018.3
 s3transfer==0.1.13
 singledispatch==3.4.0.3
