@@ -11,6 +11,8 @@ def generateNewFileName(filename):
     filename = filename.replace(" ", "-")
     filecode = "".join([random.choice(string.ascii_letters + string.digits) for n in xrange(32)])
     filetype = splitfilename[len(splitfilename) -1]
+    if "'" in filename:
+        filename = filename.replace("'", "-")
     newfilename = filename + "-" + filecode + "." + filetype
     return newfilename
 
