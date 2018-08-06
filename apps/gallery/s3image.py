@@ -4,16 +4,15 @@ import random
 import string
 from decouple import config
 from PIL import Image
+import re
 
 def generateNewFileName(filename):
     splitfilename = filename.rpartition('.')
     filename = splitfilename[0]
-    filename = filename.replace(" ", "-")
+    filename = re.sub('[^0-9a-zA-Z]+', '-', filename)
     filecode = "".join([random.choice(string.ascii_letters + string.digits) for n in xrange(32)])
     filetype = splitfilename[len(splitfilename) -1]
-    if "'" in filename:
-        filename = filename.replace("'", "-")
-    newfilename = filename + "-" + filecode + "." + filetype
+    newfilename = "{}-{}.{}".format(filename, filecode, filetype)
     return newfilename
 
 def sendImageToS3(this_img):
